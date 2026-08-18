@@ -1,0 +1,9 @@
+{
+	"armor_breaking": {
+		"category": "player",
+		"subtitle": "vantage.subtitle.armor_breaking",
+		"sounds": [
+			"vantage:armor_breaking"
+		]
+	}
+}

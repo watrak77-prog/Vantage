@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "vantage",
+	"version": "${version}",
+	"name": "Vantage",
+	"description": "Client-side tweaks, HUD widgets and PvP quality-of-life features in one mod. Every feature can be toggled and tuned in-game.",
+	"authors": [
+		"Watrak"
+	],
+	"contact": {},
+	"license": "ARR",
+	"icon": "assets/vantage/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"pl.watrak.vantage.VantageClient"
+		]
+	},
+	"mixins": [
+		{
+			"config": "vantage.mixins.json",
+			"environment": "client"
+		},
+		{
+			"config": "vantage.optional.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "${minecraft_range}",
+		"java": ">=${java_version}",
+		"fabric-api": "*"
+	}
+}

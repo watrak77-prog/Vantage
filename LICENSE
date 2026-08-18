@@ -1,0 +1,73 @@
+Vantage
+Copyright (c) 2026 Watrak. All rights reserved.
+
+This software and its source code are the exclusive property of the copyright
+holder. No permission is granted to any person to use, copy, modify, merge,
+publish, distribute, sublicense, sell, reverse engineer, decompile, or create
+derivative works of this software or any portion of it, except as expressly
+authorised in writing by the copyright holder.
+
+Permission IS granted to the end user to download the compiled mod and run it
+locally with an unmodified Minecraft client for personal use.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---------------------------------------------------------------------------
+THIRD-PARTY NOTICES
+
+This mod is an original work. Its source code is written from scratch and
+contains no code copied from any other mod.
+
+It links against, but does not include, the following:
+
+  * Minecraft (c) Mojang Studios - not distributed with this mod.
+  * Fabric Loader and Fabric API (c) FabricMC - Apache License 2.0,
+    obtained by the end user separately.
+
+It does include the following third-party assets. The terms below apply to
+those files only; the rest of this mod remains all rights reserved.
+
+  * assets/vantage/textures/gui/appleskin_icons.png - the saturation icons
+    from AppleSkin by squeek502, released into the public domain under The
+    Unlicense. No rights are reserved over that file by the copyright holder
+    of this mod, and it may be used by anyone for any purpose.
+    Source: https://github.com/squeek502/AppleSkin
+
+  * assets/vantage/textures/gui/armor_warn.png
+  * assets/vantage/sounds/armor_breaking.ogg
+    The low-durability warning icon and sound from Armor HUD.
+    Copyright (c) 2021 BerdinskiyBear, used under the MIT License:
+
+      Permission is hereby granted, free of charge, to any person obtaining a
+      copy of this software and associated documentation files (the
+      "Software"), to deal in the Software without restriction, including
+      without limitation the rights to use, copy, modify, merge, publish,
+      distribute, sublicense, and/or sell copies of the Software, and to
+      permit persons to whom the Software is furnished to do so, subject to
+      the following conditions:
+
+      The above copyright notice and this permission notice shall be included
+      in all copies or substantial portions of the Software.
+
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+      OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+      MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+      IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+      CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+      TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+      SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+    Source: https://github.com/uku3lig/armor-hud
+
+  * assets/vantage/textures/gui/gear.png - the gear icon from Bootstrap Icons,
+    Copyright (c) 2019-2024 The Bootstrap Authors, used under the MIT License
+    reproduced above. Rasterised from the original SVG; the shape is theirs.
+    Source: https://github.com/twbs/icons
+
+Development uses Mojang's official obfuscation mappings under the terms of
+the Minecraft Mappings licence.

@@ -1,0 +1,12 @@
+{
+	"required": false,
+	"minVersion": "0.8",
+	"package": "pl.watrak.vantage.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ClientExplosionTrackerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
