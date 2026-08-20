@@ -64,10 +64,15 @@ those files only; the rest of this mod remains all rights reserved.
 
     Source: https://github.com/uku3lig/armor-hud
 
-  * assets/vantage/textures/gui/gear.png - the gear icon from Bootstrap Icons,
-    Copyright (c) 2019-2024 The Bootstrap Authors, used under the MIT License
-    reproduced above. Rasterised from the original SVG; the shape is theirs.
-    Source: https://github.com/twbs/icons
+  * assets/vantage/textures/gui/settings.png - the configure icon from Mod Menu,
+    Copyright (c) 2018-2020 Prospector, used under the MIT License reproduced
+    above. Taken unchanged, only renamed, from the sprite Mod Menu draws on its
+    own configure button:
+      src/main/resources/assets/modmenu/textures/gui/sprites/configure/enabled.png
+    at tag 26.3. Mod Menu carries a single LICENSE file covering the whole
+    repository, with no separate terms for artwork, so the same MIT grant that
+    covers its code covers this file.
+    Source: https://github.com/TerraformersMC/ModMenu
 
 Development uses Mojang's official obfuscation mappings under the terms of
 the Minecraft Mappings licence.
