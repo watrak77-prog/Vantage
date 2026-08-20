@@ -74,12 +74,11 @@ The full terms are in [LICENSE](https://github.com/watrak77-prog/Vantage/blob/ma
 
 ### Third-party assets
 
-No code from any other mod is included; the source is written from scratch. Two bundled **assets** are third-party and keep their own, more permissive terms, which apply to those files only:
+The code is written from scratch and contains nothing copied from other mods. A few art and sound files are bundled, and those stay under the licences of the projects they came from:
 
-| File | Origin | Licence |
-|---|---|---|
-| `textures/gui/appleskin_icons.png` | [AppleSkin](https://github.com/squeek502/AppleSkin) by squeek502 | The Unlicense — public domain |
-| `textures/gui/gear.png` | [Bootstrap Icons](https://github.com/twbs/icons) | MIT |
-| `textures/gui/armor_warn.png`, `sounds/armor_breaking.ogg` | [Armor HUD](https://github.com/BerdinskiyBear/armor-hud) by BerdinskiyBear, taken from [uku3lig's fork](https://github.com/uku3lig/armor-hud) | MIT |
+* **Settings icon** — `assets/vantage/textures/gui/settings.png`, the configure icon from [Mod Menu](https://github.com/TerraformersMC/ModMenu), Copyright (c) 2018-2020 Prospector, used under the MIT License. Mod Menu ships a single licence file covering its whole repository, with no separate terms for artwork.
+* **Low durability warning** — icon and sound from [Armor HUD](https://github.com/uku3lig/armor-hud), Copyright (c) 2021 BerdinskiyBear, used under the MIT License.
+* **Saturation icons** — from [AppleSkin](https://github.com/squeek502/AppleSkin) by squeek502, released into the public domain under The Unlicense.
 
-Both notices are reproduced in full in [LICENSE](https://github.com/watrak77-prog/Vantage/blob/main/LICENSE). Minecraft, Fabric Loader and Fabric API are linked against but not distributed with this mod.
+Minecraft itself, Fabric Loader and Fabric API are not distributed with this mod. Full licence texts and exact source paths are in [LICENSE](https://github.com/watrak77-prog/Vantage/blob/main/LICENSE).
+
