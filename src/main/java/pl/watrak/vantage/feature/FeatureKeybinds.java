@@ -83,7 +83,11 @@ public final class FeatureKeybinds {
 			return;
 		}
 
-		if (minecraft.getWindow() == null || ClientCompat.currentScreen(minecraft) != null) {
+		// Held in a local because before 1.21.9 the key check wanted the raw
+		// GLFW handle rather than the window itself, and the build script
+		// reaches that difference through this name.
+		var window = minecraft.getWindow();
+		if (window == null || ClientCompat.currentScreen(minecraft) != null) {
 			HELD.clear();
 			return;
 		}
@@ -93,7 +97,7 @@ public final class FeatureKeybinds {
 
 		for (Map.Entry<String, Integer> binding : bindings.entrySet()) {
 			int key = binding.getValue();
-			boolean down = InputConstants.isKeyDown(minecraft.getWindow(), key);
+			boolean down = InputConstants.isKeyDown(window, key);
 			boolean wasDown = HELD.getOrDefault(key, false);
 			HELD.put(key, down);
 

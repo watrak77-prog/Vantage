@@ -47,6 +47,7 @@ final class MixinSelfCheck {
 			"net.minecraft.world.item.component.ItemContainerContents",
 			"net.minecraft.client.renderer.LightTexture",
 			"net.minecraft.client.renderer.ScreenEffectRenderer",
+			"net.minecraft.client.renderer.debug.DebugRenderer",
 			"net.minecraft.client.renderer.fog.FogRenderer",
 			"net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment",
 			"net.minecraft.client.renderer.fog.environment.BlindnessFogEnvironment",

@@ -3,13 +3,22 @@ package pl.watrak.vantage.feature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.gizmos.GizmoStyle;
-import net.minecraft.gizmos.Gizmos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import pl.watrak.vantage.config.ConfigManager;
+
+//? if >=1.21.11 {
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+//?} else {
+/*import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
+*///?}
 
 /**
  * Outlines players, and only players, without turning on the debug view.
@@ -22,13 +31,64 @@ import pl.watrak.vantage.config.ConfigManager;
  * something you can see rather than judge. The range comes from the game's own
  * check, which reads the interaction-range attribute — so it stays right on
  * servers that change it rather than assuming vanilla's three blocks.
+ *
+ * <p>Which players get a box is settled once, in {@link #forEachTarget}; only the
+ * drawing differs between versions, and the two ways of doing it are far enough
+ * apart to be worth writing out separately.
  */
 public final class CombatHitboxes {
 
 	private CombatHitboxes() {
 	}
 
+	//? if >=1.21.11 {
+	/**
+	 * Hands each box to the collector that is open for this frame.
+	 *
+	 * <p>Thickness is the stroke width the collector already understands, so
+	 * there is nothing to approximate.
+	 */
 	public static void emit(Frustum frustum, float partialTick) {
+		forEachTarget(frustum, partialTick, (box, argb) ->
+				Gizmos.cuboid(box, GizmoStyle.stroke(argb, ConfigManager.get().hitboxThickness)));
+	}
+	//?} else {
+	/*// Draws the boxes into the frame's line batch, which is what these versions
+	// offer in place of a collector.
+	//
+	// Two things follow from that. The pose stack sits at the camera, so every
+	// box has to be brought back to it. And the line width belongs to the render
+	// type, shared with everything else in the same batch, so setting it here
+	// would thicken vanilla's lines too — thickness is nested boxes instead.
+	public static void emit(PoseStack poseStack, MultiBufferSource.BufferSource buffers,
+	                        Frustum frustum, double camX, double camY, double camZ, boolean translucent) {
+		// From 1.21.9 the debug shapes are drawn in two passes and this runs
+		// once for each. Lines belong in the opaque one, and without this check
+		// every box would be drawn a second time over the top of itself.
+		if (translucent) {
+			return;
+		}
+
+		// The call site has no partial tick to hand over, so it is asked for.
+		float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+		VertexConsumer lines = buffers.getBuffer(RenderType.lines());
+
+		forEachTarget(frustum, partialTick, (box, argb) -> {
+			float a = (argb >> 24 & 0xFF) / 255.0F;
+			float r = (argb >> 16 & 0xFF) / 255.0F;
+			float g = (argb >> 8 & 0xFF) / 255.0F;
+			float b = (argb & 0xFF) / 255.0F;
+
+			AABB local = box.move(-camX, -camY, -camZ);
+			for (int step = 0; step < ConfigManager.get().hitboxThickness; step++) {
+				ShapeRenderer.renderLineBox(poseStack.last(), lines, local.inflate(step * 0.004), r, g, b, a);
+			}
+		});
+	}
+	*///?}
+
+	/** Walks the players worth drawing and works out the colour for each. */
+	private static void forEachTarget(Frustum frustum, float partialTick, Outline outline) {
 		if (!ConfigManager.get().combatHitboxes) {
 			return;
 		}
@@ -40,7 +100,7 @@ public final class CombatHitboxes {
 		}
 
 		for (Entity entity : minecraft.level.entitiesForRendering()) {
-			if (!(entity instanceof Player player) || !shouldDraw(minecraft, self, player, frustum)) {
+			if (!(entity instanceof Player player) || !shouldDraw(self, player, frustum)) {
 				continue;
 			}
 
@@ -54,12 +114,11 @@ public final class CombatHitboxes {
 					? ConfigManager.get().hitboxReachColour
 					: ConfigManager.get().hitboxColour;
 
-			Gizmos.cuboid(box, GizmoStyle.stroke(0xFF000000 | rgb,
-					ConfigManager.get().hitboxThickness));
+			outline.draw(box, 0xFF000000 | rgb);
 		}
 	}
 
-	private static boolean shouldDraw(Minecraft minecraft, LocalPlayer self, Player player, Frustum frustum) {
+	private static boolean shouldDraw(LocalPlayer self, Player player, Frustum frustum) {
 		// Invisibility is a tactic, not a rendering accident: drawing a box
 		// around someone who drank a potion would defeat the point of it, so
 		// this follows the game's own debug view in leaving them out.
@@ -74,6 +133,11 @@ public final class CombatHitboxes {
 		}
 
 		return frustum.isVisible(player.getBoundingBox());
+	}
+
+	/** What to do with one box, once the shared code has settled on it. */
+	private interface Outline {
+		void draw(AABB box, int argb);
 	}
 
 }

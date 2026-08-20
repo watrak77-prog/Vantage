@@ -79,7 +79,7 @@ public final class OptionRegistry {
 						new Option.Toggle("visual_barriers",
 								() -> c.visualBarriers, v -> c.visualBarriers = v),
 						// One switch for the whole feature; which items it applies to
-						// and by how much lives behind the gear.
+						// and by how much lives behind the settings icon.
 						new Option.Tunable("item_scales",
 								() -> c.itemScaleFirstPerson || c.itemScaleDropped,
 								v -> {
@@ -132,7 +132,7 @@ public final class OptionRegistry {
 		);
 	}
 
-	/** Everything behind the item scaling gear. */
+	/** Everything behind the item scaling settings icon. */
 	public static List<Option> itemScaleOptions() {
 		VantageConfig c = ConfigManager.get();
 

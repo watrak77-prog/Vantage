@@ -6,7 +6,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import pl.watrak.vantage.config.ConfigManager;
@@ -177,14 +176,28 @@ public final class FeatureKeybindScreen extends Screen {
 	 * While a row is listening, the next key belongs to it rather than to the
 	 * screen — including Escape, which clears the binding instead of closing.
 	 */
+	//? if >=1.21.9 {
 	@Override
-	public boolean keyPressed(KeyEvent event) {
+	public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
 		if (listening == null) {
 			return super.keyPressed(event);
 		}
+		return assign(event.key());
+	}
+	//?} else {
+	/*@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (listening == null) {
+			return super.keyPressed(keyCode, scanCode, modifiers);
+		}
+		return assign(keyCode);
+	}
+	*///?}
 
+	/** Escape means "leave this one unbound" rather than "close the screen". */
+	private boolean assign(int key) {
 		FeatureKeybinds.bind(listening,
-				event.key() == InputConstants.KEY_ESCAPE ? InputConstants.UNKNOWN.getValue() : event.key());
+				key == InputConstants.KEY_ESCAPE ? InputConstants.UNKNOWN.getValue() : key);
 		listening = null;
 		refreshResults();
 		rebuildRows();

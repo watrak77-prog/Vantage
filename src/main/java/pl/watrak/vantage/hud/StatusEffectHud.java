@@ -3,16 +3,18 @@ package pl.watrak.vantage.hud;
 import com.google.common.collect.Ordering;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -81,6 +83,8 @@ public final class StatusEffectHud {
 	private static final int PANEL_DURATION = -8355712;
 
 	private static final int BAR_TRACK = 0x60000000;
+
+	private static final Component ELLIPSIS = Component.literal("...");
 
 	private StatusEffectHud() {
 	}
@@ -295,6 +299,22 @@ public final class StatusEffectHud {
 		};
 	}
 
+	/**
+	 * The text, cut with an ellipsis if it does not fit the width given.
+	 *
+	 * <p>Vanilla does this too, but the method it does it with only became
+	 * reachable in 1.21.11 and had gone again by 26.x, so the mod carries its
+	 * own. It is a handful of lines either way.
+	 */
+	private static FormattedCharSequence clip(Component text, Minecraft minecraft, int width) {
+		if (minecraft.font.width(text) <= width) {
+			return text.getVisualOrderText();
+		}
+
+		FormattedText head = minecraft.font.substrByWidth(text, width - minecraft.font.width(ELLIPSIS));
+		return Language.getInstance().getVisualOrder(FormattedText.composite(head, ELLIPSIS));
+	}
+
 	private static void drawPanel(GuiGraphics graphics, Minecraft minecraft, MobEffectInstance effect,
 	                              int x, int y) {
 		graphics.blitSprite(RenderPipelines.GUI_TEXTURED,
@@ -308,10 +328,10 @@ public final class StatusEffectHud {
 		// ellipsis instead of running past the border.
 		int textWidth = PANEL_WIDTH - PANEL_TEXT_X - PANEL_INSET;
 		graphics.drawString(minecraft.font,
-				StringWidget.clipText(displayName(effect), minecraft.font, textWidth),
+				clip(displayName(effect), minecraft, textWidth),
 				x + PANEL_TEXT_X, y + PANEL_TEXT_Y, -1);
 		graphics.drawString(minecraft.font,
-				StringWidget.clipText(duration(effect, minecraft), minecraft.font, textWidth),
+				clip(duration(effect, minecraft), minecraft, textWidth),
 				x + PANEL_TEXT_X, y + PANEL_TEXT_Y + 9, PANEL_DURATION);
 
 		int thickness = barThickness();

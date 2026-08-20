@@ -159,7 +159,7 @@
 	"vantage.option.combat_hitboxes": "Combat hitboxes",
 	"vantage.option.combat_hitboxes.tooltip": "Outlines players only, without the debug view's clutter. The box turns red once they are within your attack range. Invisible players are left out.",
 	"vantage.screen.item_scale_options": "Item Scaling",
-	"vantage.option.item_scales.tooltip": "Resize chosen items. Which items, and by how much, is behind the gear.",
+	"vantage.option.item_scales.tooltip": "Resize chosen items. Which items, and by how much, is behind the settings icon.",
 	"vantage.option.item_scales_list": "Per-item scale...",
 	"vantage.screen.combat_hitboxes": "Combat Hitboxes",
 	"vantage.option.hitbox_thickness": "Line width",

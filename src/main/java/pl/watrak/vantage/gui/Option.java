@@ -99,7 +99,7 @@ public sealed interface Option {
 	}
 
 	/**
-	 * An on/off setting that has more to it, shown as a toggle with a gear
+	 * An on/off setting that has more to it, shown as a toggle with a settings icon
 	 * beside it.
 	 *
 	 * <p>Keeping the switch and its settings on one row says plainly that they

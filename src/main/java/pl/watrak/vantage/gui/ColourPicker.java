@@ -3,7 +3,6 @@ package pl.watrak.vantage.gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -94,15 +93,29 @@ public final class ColourPicker extends AbstractWidget {
 		graphics.fill(x, y - 2, x + 1, y + 3, 0xFFFFFFFF);
 	}
 
+	// 1.21.9 folded the pointer position into one event object. Both shapes say
+	// the same thing, so only the unwrapping differs.
+	//? if >=1.21.9 {
 	@Override
-	public void onClick(MouseButtonEvent event, boolean doubled) {
+	public void onClick(net.minecraft.client.input.MouseButtonEvent event, boolean doubled) {
 		apply(event.x(), event.y());
 	}
 
 	@Override
-	protected void onDrag(MouseButtonEvent event, double dragX, double dragY) {
+	protected void onDrag(net.minecraft.client.input.MouseButtonEvent event, double dragX, double dragY) {
 		apply(event.x(), event.y());
 	}
+	//?} else {
+	/*@Override
+	public void onClick(double mouseX, double mouseY) {
+		apply(mouseX, mouseY);
+	}
+
+	@Override
+	protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+		apply(mouseX, mouseY);
+	}
+	*///?}
 
 	private void apply(double mouseX, double mouseY) {
 		int sw = squareWidth();

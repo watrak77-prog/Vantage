@@ -4,7 +4,6 @@ import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -21,20 +20,25 @@ public final class VantageWidgets {
 	private VantageWidgets() {
 	}
 
-	private static final Identifier GEAR = VantageClient.id("textures/gui/gear.png");
-	private static final int GEAR_ICON = 12;
-	private static final int GEAR_TEXTURE = 16;
+	/**
+	 * Sliders rather than a gear: at this size a gear turns to mush, while three
+	 * bars with knobs stay readable down to the last pixel. Drawn at its native
+	 * size so every pixel of the source lands on exactly one pixel of the screen.
+	 */
+	private static final Identifier SETTINGS = VantageClient.id("textures/gui/settings.png");
+	private static final int SETTINGS_TEXTURE = 20;
+	private static final int SETTINGS_ICON = 20;
 
 	/** Present but quiet until pointed at, then as bright as the label. */
-	private static final int GEAR_IDLE = 0xFFB4B4B4;
-	private static final int GEAR_HOVER = 0xFFFFFFFF;
-	/** How much of a row's right-hand end belongs to the gear. */
-	private static final int GEAR_ZONE = 22;
+	private static final int SETTINGS_IDLE = 0xFFB4B4B4;
+	private static final int SETTINGS_HOVER = 0xFFFFFFFF;
+	/** How much of a row's right-hand end belongs to the settings icon. */
+	private static final int SETTINGS_ZONE = 24;
 
 	/**
 	 * A switch with its own settings, as one row rather than two widgets.
 	 *
-	 * <p>The gear sits inside the frame at the right-hand end: a separate button
+	 * <p>The icon sits inside the frame at the right-hand end: a separate button
 	 * beside it read as an unrelated control, when it belongs to the very switch
 	 * it stands next to. Clicks landing on that end open the settings, the rest
 	 * of the row still toggles.
@@ -46,46 +50,96 @@ public final class VantageWidgets {
 				button -> button.setMessage(toggleText(toggle)),
 				supplier -> supplier.get()) {
 
+			//? if >=1.21.9 {
 			@Override
 			public void onPress(net.minecraft.client.input.InputWithModifiers input) {
-				if (input instanceof MouseButtonEvent click && overGear(click.x())) {
-					Minecraft.getInstance().setScreen(option.factory().apply(parent));
+				if (input instanceof net.minecraft.client.input.MouseButtonEvent click && overSettings(click.x())) {
+					openSettings();
 					return;
 				}
+				flip();
+			}
+			//?} else {
+			/*// The press carries no pointer position on these versions, so the
+			// click is caught a step earlier, where it still does.
+			@Override
+			public void onClick(double mouseX, double mouseY) {
+				if (overSettings(mouseX)) {
+					openSettings();
+					return;
+				}
+				super.onClick(mouseX, mouseY);
+			}
+
+			// Reached by the keyboard as well, which has no icon to aim at.
+			@Override
+			public void onPress() {
+				flip();
+			}
+			*///?}
+
+			private void openSettings() {
+				Minecraft.getInstance().setScreen(option.factory().apply(parent));
+			}
+
+			private void flip() {
 				toggle.setter().accept(!toggle.getter().getAsBoolean());
 				setMessage(toggleText(toggle));
 			}
 
-			private boolean overGear(double mouseX) {
-				return mouseX >= getX() + getWidth() - GEAR_ZONE;
+			private boolean overSettings(double mouseX) {
+				return mouseX >= getX() + getWidth() - SETTINGS_ZONE;
 			}
 
+			//? if >=1.21.11 {
 			@Override
 			protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 				// Overriding this replaces everything the button draws, frame
 				// included, so the frame has to be asked for explicitly.
 				renderDefaultSprite(graphics);
+				drawLabel(graphics, 0xFFFFFFFF);
+				drawSettings(graphics, mouseX, mouseY);
+			}
+			//?} else {
+			/*// Here the frame and the label are one method, and it is the label
+			// alone that needs moving, so only that half is taken over.
+			@Override
+			protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+				super.renderWidget(graphics, mouseX, mouseY, partialTick);
+				drawSettings(graphics, mouseX, mouseY);
+			}
 
-				// The label is centred on the part of the row that is still the
-				// switch, so it never slides under the gear.
-				int labelWidth = getWidth() - GEAR_ZONE;
+			@Override
+			public void renderString(GuiGraphics graphics, net.minecraft.client.gui.Font font, int colour) {
+				drawLabel(graphics, colour);
+			}
+			*///?}
+
+			/**
+			 * The label is centred on the part of the row that is still the
+			 * switch, so it never slides under the icon.
+			 */
+			private void drawLabel(GuiGraphics graphics, int colour) {
+				int labelWidth = getWidth() - SETTINGS_ZONE;
 				graphics.drawCenteredString(Minecraft.getInstance().font, getMessage(),
-						getX() + labelWidth / 2, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF);
+						getX() + labelWidth / 2, getY() + (getHeight() - 8) / 2, colour);
+			}
 
-				int edge = getX() + getWidth() - GEAR_ZONE;
+			private void drawSettings(GuiGraphics graphics, int mouseX, int mouseY) {
+				int edge = getX() + getWidth() - SETTINGS_ZONE;
 				boolean pointed = mouseX >= edge && mouseX < getX() + getWidth()
 						&& mouseY >= getY() && mouseY < getY() + getHeight();
 
 				// Drawn smaller than the texture and tinted on the way, so the
 				// same white image serves both states.
-				graphics.blit(RenderPipelines.GUI_TEXTURED, GEAR,
-						edge + (GEAR_ZONE - GEAR_ICON) / 2,
-						getY() + (getHeight() - GEAR_ICON) / 2,
+				graphics.blit(RenderPipelines.GUI_TEXTURED, SETTINGS,
+						edge + (SETTINGS_ZONE - SETTINGS_ICON) / 2,
+						getY() + (getHeight() - SETTINGS_ICON) / 2,
 						0.0F, 0.0F,
-						GEAR_ICON, GEAR_ICON,
-						GEAR_TEXTURE, GEAR_TEXTURE,
-						GEAR_TEXTURE, GEAR_TEXTURE,
-						pointed ? GEAR_HOVER : GEAR_IDLE);
+						SETTINGS_ICON, SETTINGS_ICON,
+						SETTINGS_TEXTURE, SETTINGS_TEXTURE,
+						SETTINGS_TEXTURE, SETTINGS_TEXTURE,
+						pointed ? SETTINGS_HOVER : SETTINGS_IDLE);
 			}
 		};
 	}
@@ -116,7 +170,7 @@ public final class VantageWidgets {
 			case Option.Slider slider -> new IntSlider(slider, x, y, width, height);
 			case Option.Choice choice -> choice(choice, x, y, width, height);
 			case Option.Link link -> link(link, parent, x, y, width, height);
-			// Only the switch is built here; the gear beside it is a second
+			// Only the switch is built here; the icon beside it is a second
 			// widget, added by whichever screen is laying the row out.
 			case Option.Tunable tunable -> tunable(tunable, parent, x, y, width, height);
 		};
