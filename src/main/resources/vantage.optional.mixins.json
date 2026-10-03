@@ -4,7 +4,8 @@
 	"package": "pl.watrak.vantage.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ClientExplosionTrackerMixin"
+		"ClientExplosionTrackerMixin",
+		"FirstPersonHandsMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

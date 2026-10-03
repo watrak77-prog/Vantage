@@ -11,7 +11,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import org.jspecify.annotations.Nullable;
+//? if >=26.3 {
+/*import org.lwjgl.sdl.SDLMouse;
+import java.nio.FloatBuffer;
+*///?} else {
 import org.lwjgl.glfw.GLFW;
+//?}
 import pl.watrak.vantage.VantageClient;
 import pl.watrak.vantage.config.ConfigManager;
 
@@ -35,7 +40,7 @@ public final class ShulkerPreview {
 		key = KeyBindingHelper.registerKeyBinding(new KeyMapping(
 				"key.vantage.shulker_preview",
 				InputConstants.Type.KEYSYM,
-				GLFW.GLFW_KEY_LEFT_ALT,
+				InputConstants.KEY_LALT,
 				VantageClient.CATEGORY
 		));
 	}
@@ -53,6 +58,17 @@ public final class ShulkerPreview {
 		}
 
 		InputConstants.Key bound = KeyBindingHelper.getBoundKeyOf(key);
+
+		//? if >=26.3 {
+		/*// SDL keeps one keyboard state for the whole process, so no window is
+		// named. Its mouse buttons are numbered from one rather than from zero,
+		// and their state arrives as a bitmask.
+		return switch (bound.getType()) {
+			case KEYBOARD -> InputConstants.isKeyDown(bound.getValue());
+			case MOUSE -> (SDLMouse.SDL_GetMouseState((FloatBuffer) null, (FloatBuffer) null)
+					& (1 << (bound.getValue() - 1))) != 0;
+		};
+		*///?} else {
 		Window window = Minecraft.getInstance().getWindow();
 
 		return switch (bound.getType()) {
@@ -60,6 +76,7 @@ public final class ShulkerPreview {
 			case MOUSE -> GLFW.glfwGetMouseButton(window.handle(), bound.getValue()) == GLFW.GLFW_PRESS;
 			case SCANCODE -> false;
 		};
+		//?}
 	}
 
 	/** Non-empty contents of a shulker box, or an empty list for anything else. */

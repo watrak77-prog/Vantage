@@ -1,7 +1,12 @@
 package pl.watrak.vantage.feature;
 
 import net.minecraft.client.Minecraft;
+//? if >=26.3 {
+/*import org.lwjgl.sdl.SDLProperties;
+import org.lwjgl.sdl.SDLVideo;
+*///?} else {
 import org.lwjgl.glfw.GLFWNativeWin32;
+//?}
 import org.lwjgl.system.APIUtil;
 import org.lwjgl.system.JNI;
 import org.lwjgl.system.MemoryStack;
@@ -91,7 +96,15 @@ public final class WindowTheme {
 			return false;
 		}
 
+		//? if >=26.3 {
+		/*// SDL hands the native handle out as a window property instead of
+		// through a call of its own.
+		long window = SDLProperties.SDL_GetPointerProperty(
+				SDLVideo.SDL_GetWindowProperties(Minecraft.getInstance().getWindow().handle()),
+				SDLVideo.SDL_PROP_WINDOW_WIN32_HWND_POINTER, 0L);
+		*///?} else {
 		long window = GLFWNativeWin32.glfwGetWin32Window(Minecraft.getInstance().getWindow().handle());
+		//?}
 		if (window == 0L) {
 			return false;
 		}

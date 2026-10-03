@@ -7,10 +7,14 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+//? if >=26.3 {
+/*import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+*///?} else {
 import net.minecraft.client.renderer.ItemInHandRenderer;
+//?}
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +28,11 @@ import pl.watrak.vantage.feature.ItemRenderFeature;
  * Everything that adjusts the item held in first person: the low shield, the
  * per-item scale, the disabled-shield tint, and keeping a map up while rowing.
  */
+//? if >=26.3 {
+/*@Mixin(FirstPersonHandsAndItemsRenderer.class)
+*///?} else {
 @Mixin(ItemInHandRenderer.class)
+//?}
 public abstract class ItemInHandRendererMixin {
 
 	/**
@@ -39,6 +47,39 @@ public abstract class ItemInHandRendererMixin {
 	 * case deliberately does nothing for them, so the shield is placed entirely
 	 * by its own model transform and this is the only point where it can move.
 	 */
+	//? if >=26.3 {
+	/*// 26.3 folded renderItem into submitArmWithItem, which hands the stack to
+	// its render state directly. That call is the new seam: it takes the pose
+	// stack, so the push and scale still bracket exactly the item being drawn.
+	// It appears twice, once per hand, and both are ours to transform.
+	@WrapOperation(
+			method = "submitArmWithItem",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit("
+							+ "Lcom/mojang/blaze3d/vertex/PoseStack;"
+							+ "Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V"
+			)
+	)
+	private void vantage$transformHeldItem(ItemStackRenderState state, PoseStack poseStack,
+	                                       SubmitNodeCollector collector, int light, int overlay,
+	                                       int outline, Operation<Void> original,
+	                                       @Local(argsOnly = true) ItemStack stack) {
+		if (!ItemRenderFeature.isHeldTransformed(stack)) {
+			original.call(state, poseStack, collector, light, overlay, outline);
+			return;
+		}
+
+		poseStack.pushPose();
+		poseStack.translate(0.0F, ItemRenderFeature.verticalOffset(stack), 0.0F);
+
+		float scale = ItemRenderFeature.firstPersonScale(stack);
+		poseStack.scale(scale, scale, scale);
+
+		original.call(state, poseStack, collector, light, overlay, outline);
+		poseStack.popPose();
+	}
+	*///?} else {
 	@WrapOperation(
 			//? if >=26.2 {
 			/*method = "submitArmWithItem",
@@ -73,6 +114,7 @@ public abstract class ItemInHandRendererMixin {
 		original.call(self, entity, stack, context, poseStack, collector, light);
 		poseStack.popPose();
 	}
+	//?}
 
 	/**
 	 * Turns the held shield red while it is disabled.
@@ -91,6 +133,28 @@ public abstract class ItemInHandRendererMixin {
 	 * idea reached through a different call, so the whole target changes rather
 	 * than a single name.
 	 */
+	//? if >=26.3 {
+	/*// Same call, reached through submitArmWithItem now that renderItem is gone.
+	// The entity is no longer among the arguments, but this path is first person
+	// by definition, so the holder is the local player.
+	@ModifyArg(
+			method = "submitArmWithItem",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit("
+							+ "Lcom/mojang/blaze3d/vertex/PoseStack;"
+							+ "Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V"
+			),
+			index = 3
+	)
+	private int vantage$tintDisabledShield(int overlay, @Local(argsOnly = true) ItemStack stack) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player != null && ItemRenderFeature.isShieldDisabled(player, stack)) {
+			return OverlayTexture.pack(OverlayTexture.NO_WHITE_U, OverlayTexture.RED_OVERLAY_V);
+		}
+		return overlay;
+	}
+	*///?} else {
 	@ModifyArg(
 			method = "renderItem",
 			//? if >=1.21.9 {
@@ -123,6 +187,7 @@ public abstract class ItemInHandRendererMixin {
 		}
 		return overlay;
 	}
+	//?}
 
 	/**
 	 * Keeps a held map on screen while rowing a boat.
@@ -137,6 +202,7 @@ public abstract class ItemInHandRendererMixin {
 	 * the intended rowing animation, and suppressing it everywhere would look
 	 * wrong rather than helpful.
 	 */
+	//? if <26.3 {
 	@ModifyExpressionValue(
 			method = "tick",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isHandsBusy()Z")
@@ -151,8 +217,7 @@ public abstract class ItemInHandRendererMixin {
 			return handsBusy;
 		}
 
-		boolean holdingMap = player.getMainHandItem().has(DataComponents.MAP_ID)
-				|| player.getOffhandItem().has(DataComponents.MAP_ID);
-		return !holdingMap;
+		return !ItemRenderFeature.isHoldingMap(player);
 	}
+	//?}
 }

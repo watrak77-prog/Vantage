@@ -1,5 +1,6 @@
 package pl.watrak.vantage.feature;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
@@ -61,5 +62,17 @@ public final class ItemRenderFeature {
 	 */
 	public static boolean isShieldDisabled(Player player, ItemStack stack) {
 		return ShieldStatusTracker.isDisabledShield(player, stack);
+	}
+	/**
+	 * Whether either hand holds a map.
+	 *
+	 * <p>Asked by the rowing fix, which keeps the hand height up only for maps:
+	 * for anything else the lowered hand is the intended animation. Checked by
+	 * the map-id component rather than by item type, so a filled map counts and
+	 * a blank one does not.
+	 */
+	public static boolean isHoldingMap(Player player) {
+		return player.getMainHandItem().has(DataComponents.MAP_ID)
+				|| player.getOffhandItem().has(DataComponents.MAP_ID);
 	}
 }
